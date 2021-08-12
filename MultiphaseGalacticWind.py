@@ -157,8 +157,6 @@ def Multiphase_Wind_Evo(r, state):
     Mach_sq_wind = (v_wind**2 / cs_sq_wind)
     Z_wind       = rhoZ_wind/rho_wind
     vc           = v_circ0 * np.where(r<r_sonic, r/r_sonic, 1.0)
-    Phir         = v_circ0**2 * np.where(r<r_sonic, 0.5 * (r/r_sonic)**2, np.log(r/r_sonic)) 
-    vBsq_wind    = 0.5 * v_wind**2 + (gamma / (gamma-1)) * Pressure/rho_wind + Phir
 
     # source term from inside galaxy
     Edot_SN = Edot_per_Vol * np.where(Mach_sq_wind<1, 1.0, 0.0) 
@@ -168,7 +166,6 @@ def Multiphase_Wind_Evo(r, state):
     Ndot_cloud              = Ndot_cloud_init * np.where(r<cold_cloud_injection_radial_extent, (r/cold_cloud_injection_radial_extent)**cold_cloud_injection_radial_power, 1.0)
     number_density_cloud    = Ndot_cloud/(Omwind * v_cloud * r**2)
     cs_cl_sq                = gamma * kb*T_cloud/(mu*mp)
-    vBsq_cl                 = 0.5 * v_cloud**2 + (1 / (gamma-1)) * cs_cl_sq + Phir
 
     # cloud transfer rates
     rho_cloud    = Pressure * (mu*mp) / (kb*T_cloud) # cloud in pressure equilibrium
@@ -258,7 +255,7 @@ def Multiphase_Wind_Evo(r, state):
 def Single_Phase_Wind_Evo(r, state):
     """
     Calculates the derivative of v_wind, rho_wind, Pressure for a single phase wind. 
-    Used with solve_ivp to calculate steady state structure of a single phase wind. 
+    Used with solve_ivp to calculate steady state structure of a single phase wind with no cooling and no gravity. 
     """
     v_wind     = state[0]
     rho_wind   = state[1]
@@ -267,9 +264,6 @@ def Single_Phase_Wind_Evo(r, state):
     # wind properties
     cs_sq_wind   = (gamma*Pressure/rho_wind)
     Mach_sq_wind = (v_wind**2 / cs_sq_wind)
-    vc           = v_circ0 * np.where(r<r_sonic, r/r_sonic, 1.0)
-    Phir         = v_circ0**2 * np.where(r<r_sonic, 0.5 * (r/r_sonic)**2, np.log(r/r_sonic)) 
-    vBsq_wind    = 0.5 * v_wind**2 + (gamma / (gamma-1)) * Pressure/rho_wind + Phir
 
     # source term from inside galaxy
     Edot_SN = Edot_per_Vol * np.where(r<r_sonic, 1.0, 0.0)
