@@ -108,7 +108,7 @@ def tcool_P(T,P, metallicity):
     nH_actual = P/T*(mu/muH)
     nH = np.where(nH_actual>1, 1, nH_actual)
     nH = np.where(nH<10**-8, 10**-8, nH)
-    return 1.5 * (muH/mu)**2 * kb * T / ( nH_actual * Lambda_z0((np.log10(nH),np.log10(T), metallicity)))
+    return (1./(gamma-1.)) * (muH/mu) * kb * T / ( nH_actual * Lambda_z0((np.log10(nH),np.log10(T), metallicity)))
 
 def Lambda_T_P(T,P, metallicity):
     """
